@@ -18,19 +18,20 @@ import android.os.Environment;
 import id.zelory.compressor.Compressor;
 import android.graphics.BitmapFactory;
 import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
     private final int OPEN_REQUEST_CODE=4;
     private ContentResolver resolver;
-    private ImageView iIv, cIv;
+    private ImageView previewIv;
     private Uri openUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         resolver = getContentResolver();
-        iIv = findViewById(R.id.i_preview_iv);
-        cIv = findViewById(R.id.c_preview_iv);
+        previewIv = findViewById(R.id.preview_iv);
     }
 
     public void open(View v) {
@@ -49,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
             }
             is.close();
             os.close();
-            
-            File compressed = new Compressor(this).setQuality(60).setDestinationDirectoryPath(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),"Compressed").getAbsolutePath()).compressToFile(file);
-            iIv.setImageBitmap(BitmapFactory.decodeFile(compressed.getAbsolutePath()));
-            
+
+            File compressed = new Compressor(this).setQuality(60).setDestinationDirectoryPath(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Compressed").getAbsolutePath()).compressToFile(file);
+            previewIv.setImageBitmap(BitmapFactory.decodeFile(compressed.getAbsolutePath()));
+
         } catch (IOException e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
         }
@@ -66,11 +67,25 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == OPEN_REQUEST_CODE) {
                 openUri = data.getData();
                 resolver.takePersistableUriPermission(openUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                iIv.setImageURI(openUri);
+                previewIv.setImageURI(openUri);
             }
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_select_image:
+                open(null);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
 }
