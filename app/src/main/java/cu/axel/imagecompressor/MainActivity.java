@@ -23,6 +23,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.graphics.Bitmap;
 import java.text.DecimalFormat;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 public class MainActivity extends AppCompatActivity {
     private final int OPEN_REQUEST_CODE=4;
@@ -43,10 +45,29 @@ public class MainActivity extends AppCompatActivity {
     public void open(View v) {
         startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*"), OPEN_REQUEST_CODE);
     }
+    
+    public void showOptions(View v){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_options, null);
+        dialog.setTitle("Compression options");
+        dialog.setView(view);
+        dialog.setPositiveButton("Apply", new DialogInterface.OnClickListener(){
+
+                @Override
+                public void onClick(DialogInterface p1, int p2) {
+                }
+            });
+        dialog.setNegativeButton("Cancel", null);
+        dialog.show();
+    }
 
     public void compress(View v) {
         try {
-            File compressedFile = new Compressor(this).setQuality(60).setDestinationDirectoryPath(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Compressed").getAbsolutePath()).compressToFile(openFile);
+            File compressedFile = new Compressor(this)
+            .setQuality(60)
+            .setCompressFormat(Bitmap.CompressFormat.WEBP)
+            .setDestinationDirectoryPath(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Compressed").getAbsolutePath())
+            .compressToFile(openFile);
             Bitmap bitmap = BitmapFactory.decodeFile(compressedFile.getAbsolutePath());
             infoTv.setText(bitmap.getWidth() + "x" + bitmap.getHeight() + " " + formatFileSize(compressedFile.length()));
             previewIv.setImageBitmap(bitmap);
