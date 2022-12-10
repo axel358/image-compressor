@@ -14,10 +14,25 @@
 		android:text="Quality"
 		android:textSize="15sp"/>
 
-	<SeekBar
+	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:id="@+id/sb_quality"/>
+		android:orientation="horizontal"
+		android:gravity="center_vertical">
+
+		<SeekBar
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:id="@+id/sb_quality"
+			android:layout_weight="1.0"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="0"
+			android:id="@+id/tv_quality"/>
+
+	</LinearLayout>
 
 	<TextView
 		android:layout_height="wrap_content"
@@ -26,10 +41,24 @@
 		android:layout_marginTop="6dp"
 		android:textSize="15sp"/>
 
-	<SeekBar
+	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:id="@+id/sb_resolution"/>
+		android:orientation="horizontal">
+
+		<SeekBar
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:id="@+id/sb_resolution"
+			android:layout_weight="1.0"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="0"
+			android:id="@+id/tv_resolution"/>
+
+	</LinearLayout>
 
 	<TextView
 		android:layout_height="wrap_content"
@@ -41,14 +70,8 @@
 	<RadioGroup
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:orientation="horizontal">
-
-		<RadioButton
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:text="PNG"
-			android:layout_weight="1.0"
-			android:id="@+id/btn_png"/>
+		android:orientation="horizontal"
+		android:id="@+id/group_formats">
 
 		<RadioButton
 			android:layout_height="wrap_content"

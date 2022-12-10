@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.File;
 import android.os.Environment;
-import id.zelory.compressor.Compressor;
 import android.graphics.BitmapFactory;
 import android.widget.Toast;
 import android.view.Menu;
@@ -25,6 +24,15 @@ import android.graphics.Bitmap;
 import java.text.DecimalFormat;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import java.io.ByteArrayOutputStream;
+import android.graphics.Matrix;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
+import android.widget.RadioButton;
+import android.graphics.Bitmap.CompressFormat;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class MainActivity extends AppCompatActivity {
     private final int OPEN_REQUEST_CODE=4;
@@ -33,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri openUri;
     private TextView infoTv;
     private File openFile;
+    private SharedPreferences sp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,43 +49,115 @@ public class MainActivity extends AppCompatActivity {
         resolver = getContentResolver();
         previewIv = findViewById(R.id.preview_iv);
         infoTv = findViewById(R.id.image_info_tv);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     public void open(View v) {
         startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*"), OPEN_REQUEST_CODE);
     }
-    
-    public void showOptions(View v){
+
+    public void showOptions(View v) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.dialog_options, null);
+        final View view = getLayoutInflater().inflate(R.layout.dialog_options, null);
         dialog.setTitle("Compression options");
         dialog.setView(view);
+        dialog.setNegativeButton("Cancel", null);
+
+        final RadioGroup formatGroup = view.findViewById(R.id.group_formats);
+        final SeekBar qualitySb = view.findViewById(R.id.sb_quality);
+        final SeekBar resSb = view.findViewById(R.id.sb_resolution);
+        final TextView resTv = view.findViewById(R.id.tv_resolution);
+        final TextView qualityTv = view.findViewById(R.id.tv_quality);
+        
+        qualitySb.setMax(100);
+        resSb.setMax(100);
+        qualitySb.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+
+                @Override
+                public void onProgressChanged(SeekBar p1, int p2, boolean p3) {
+                    qualityTv.setText(p2+"");
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar p1) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar p1) {
+                }
+            });
+        resSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+
+                @Override
+                public void onProgressChanged(SeekBar p1, int p2, boolean p3) {
+                    resTv.setText(p2+"");
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar p1) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar p1) {
+                }
+            });
+        resSb.setProgress(sp.getInt("resolution", 90));
+        qualitySb.setProgress(sp.getInt("quality", 90));
+        RadioButton webpBtn = view.findViewById(R.id.btn_webp);
+        RadioButton jpgBtn = view.findViewById(R.id.btn_jpg);
+        
+        String format = sp.getString("format", "jpg");
+        webpBtn.setChecked(format.equals("webp"));
+        jpgBtn.setChecked(format.equals("jpg"));
+
         dialog.setPositiveButton("Apply", new DialogInterface.OnClickListener(){
 
                 @Override
                 public void onClick(DialogInterface p1, int p2) {
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putInt("resolution", resSb.getProgress());
+                    editor.putInt("quality", qualitySb.getProgress());
+                    RadioButton checkedBtn = view.findViewById(formatGroup.getCheckedRadioButtonId());
+                    editor.putString("format", checkedBtn.getText().toString().toLowerCase());
+                    editor.commit();
                 }
             });
-        dialog.setNegativeButton("Cancel", null);
+
         dialog.show();
     }
 
     public void compress(View v) {
         try {
-            File compressedFile = new Compressor(this)
-            .setQuality(60)
-            .setCompressFormat(Bitmap.CompressFormat.WEBP)
-            .setDestinationDirectoryPath(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Compressed").getAbsolutePath())
-            .compressToFile(openFile);
-            Bitmap bitmap = BitmapFactory.decodeFile(compressedFile.getAbsolutePath());
+
+            Bitmap bitmap = BitmapFactory.decodeFile(openFile.getAbsolutePath());
+            bitmap = scaleBitmap(bitmap, sp.getInt("resolution", 100) * 0.01f);
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            
+            Bitmap.CompressFormat format = sp.getString("format", "jpg").equals("jpg") ? Bitmap.CompressFormat.JPEG : Bitmap.CompressFormat.WEBP;
+            
+            bitmap.compress(format, sp.getInt("quality", 100), bytes);
+
+            File compressedFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "out.webp");
+            compressedFile.createNewFile();
+            FileOutputStream os = new FileOutputStream(compressedFile);
+            os.write(bytes.toByteArray());
+            os.close();
             infoTv.setText(bitmap.getWidth() + "x" + bitmap.getHeight() + " " + formatFileSize(compressedFile.length()));
             previewIv.setImageBitmap(bitmap);
 
         } catch (Exception e) {
-            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, e.toString()+"daas", Toast.LENGTH_LONG).show();
         }
 
 
+    }
+
+    public Bitmap scaleBitmap(Bitmap bitmap, float scale) {
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        
+        return Bitmap.createBitmap(
+            bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
     }
 
     @Override
@@ -96,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     is.close();
                     os.close();
-                    
+
                     Bitmap bitmap = BitmapFactory.decodeFile(openFile.getAbsolutePath());
                     previewIv.setImageBitmap(bitmap);
                     infoTv.setText(bitmap.getWidth() + "x" + bitmap.getHeight() + " " + formatFileSize(openFile.length()));
@@ -121,10 +202,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static String formatFileSize(long size) {
-        if(size <= 0) return "0";
+        if (size <= 0) return "0";
         final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
-        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
 }
