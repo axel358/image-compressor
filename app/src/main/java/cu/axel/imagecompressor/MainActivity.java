@@ -20,18 +20,24 @@ import android.graphics.BitmapFactory;
 import android.widget.Toast;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.graphics.Bitmap;
+import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
     private final int OPEN_REQUEST_CODE=4;
     private ContentResolver resolver;
     private ImageView previewIv;
     private Uri openUri;
+    private TextView infoTv;
+    private File openFile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         resolver = getContentResolver();
         previewIv = findViewById(R.id.preview_iv);
+        infoTv = findViewById(R.id.image_info_tv);
     }
 
     public void open(View v) {
@@ -40,21 +46,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void compress(View v) {
         try {
-            InputStream is = resolver.openInputStream(openUri);
-            File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "temp.jpg");
-            OutputStream os = new FileOutputStream(file);
-            byte buffer[] = new byte[1024];
+            File compressedFile = new Compressor(this).setQuality(60).setDestinationDirectoryPath(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Compressed").getAbsolutePath()).compressToFile(openFile);
+            Bitmap bitmap = BitmapFactory.decodeFile(compressedFile.getAbsolutePath());
+            infoTv.setText(bitmap.getWidth() + "x" + bitmap.getHeight() + " " + formatFileSize(compressedFile.length()));
+            previewIv.setImageBitmap(bitmap);
 
-            while (is.read(buffer) != -1) {
-                os.write(buffer);   
-            }
-            is.close();
-            os.close();
-
-            File compressed = new Compressor(this).setQuality(60).setDestinationDirectoryPath(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Compressed").getAbsolutePath()).compressToFile(file);
-            previewIv.setImageBitmap(BitmapFactory.decodeFile(compressed.getAbsolutePath()));
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
         }
 
@@ -67,7 +64,22 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == OPEN_REQUEST_CODE) {
                 openUri = data.getData();
                 resolver.takePersistableUriPermission(openUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                previewIv.setImageURI(openUri);
+                try {
+                    InputStream is = resolver.openInputStream(openUri);
+                    openFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "temp.png");
+                    OutputStream os = new FileOutputStream(openFile);
+                    byte buffer[] = new byte[1024];
+
+                    while (is.read(buffer) != -1) {
+                        os.write(buffer);   
+                    }
+                    is.close();
+                    os.close();
+                    
+                    Bitmap bitmap = BitmapFactory.decodeFile(openFile.getAbsolutePath());
+                    previewIv.setImageBitmap(bitmap);
+                    infoTv.setText(bitmap.getWidth() + "x" + bitmap.getHeight() + " " + formatFileSize(openFile.length()));
+                } catch (IOException e) {}
             }
         }
     }
@@ -87,5 +99,11 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public static String formatFileSize(long size) {
+        if(size <= 0) return "0";
+        final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
 
 }

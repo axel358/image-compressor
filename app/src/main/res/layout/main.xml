@@ -16,10 +16,10 @@
 		android:id="@+id/preview_iv"/>
 
 	<TextView
+		android:id="@+id/image_info_tv"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="1366x768 1.2MB"
 		android:textSize="16sp"/>
 
 	<LinearLayout
@@ -35,11 +35,10 @@
 			android:text="Compress"
 			android:onClick="compress"/>
 
-		<Button
-			android:drawableLeft="@drawable/ic_settings"
-			android:layout_height="wrap_content"
+		<ImageButton
+			android:src="@drawable/ic_settings"
+			android:layout_height="match_parent"
 			android:layout_width="wrap_content"
-			android:text="Options"
 			android:onClick="showOptions"/>
 
 	</LinearLayout>
@@ -48,7 +47,7 @@
 		android:drawableLeft="@drawable/ic_share"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:text="Share"
+		android:text=" Share"
 		android:onClick="share"/>
 
 </LinearLayout>
