@@ -35,7 +35,7 @@
 		android:gravity="center_vertical">
 
 		<SeekBar
-            android:max="100"
+			android:max="100"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:id="@+id/sb_quality"
@@ -62,8 +62,8 @@
 		android:orientation="horizontal">
 
 		<SeekBar
-            android:min="1"
-            android:max="100"
+			android:min="1"
+			android:max="100"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:id="@+id/sb_resolution"
@@ -107,12 +107,26 @@
 
 	</RadioGroup>
 
-	<Button
-		android:drawableLeft="@drawable/ic_share"
+	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:text=" Share"
-		android:onClick="share"/>
+		android:orientation="horizontal">
+
+		<Button
+			android:drawableLeft="@drawable/ic_share"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text=" Share"
+			android:onClick="share"/>
+
+		<Button
+            android:drawableLeft="@drawable/ic_save"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="Save"
+			android:onClick="save"/>
+
+	</LinearLayout>
 
 </LinearLayout>
 

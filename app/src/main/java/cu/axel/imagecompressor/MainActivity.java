@@ -34,9 +34,11 @@ import android.widget.RadioButton;
 import android.graphics.Bitmap.CompressFormat;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import androidx.core.content.FileProvider;
+import java.io.FileInputStream;
 
 public class MainActivity extends AppCompatActivity {
     private final int OPEN_REQUEST_CODE=4;
+    private final int SAVE_REQUEST_CODE=6;
     private ContentResolver resolver;
     private ImageView previewIv;
     private Bitmap openBitmap;
@@ -150,6 +152,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(shareIntent, "Choose an app"));
     }
 
+    public void save(View v) {
+        startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*").putExtra(Intent.EXTRA_TITLE, compressedFile.getName()), SAVE_REQUEST_CODE);
+    }
+
     public void compress() {
 
         if (openBitmap == null)
@@ -203,6 +209,21 @@ public class MainActivity extends AppCompatActivity {
                     is.close();
                     compress();
                 } catch (IOException e) {}
+            } else if (requestCode == SAVE_REQUEST_CODE) {     
+                try {
+                    byte buffer[] = new byte[1024];
+                    FileInputStream is = new FileInputStream(compressedFile);
+                    OutputStream os = resolver.openOutputStream(data.getData());
+                    while (is.read(buffer) != -1) {
+                        os.write(buffer);   
+                    }
+                    is.close();
+                    os.close();
+                    Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
+
+                } catch (IOException e) {
+                    Toast.makeText(this, "Could not save pic", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
