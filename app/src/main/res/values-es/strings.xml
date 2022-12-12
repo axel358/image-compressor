@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quality">Calidad</string>
+    <string name="resolution">Resolución</string>
+    <string name="format">Formato</string>
+    <string name="share">Compartir</string>
+    <string name="save">Guardar</string>
+    <string name="saved">Imagen guardada</string>
+    <string name="save_error">No se pudo guardar la imagen</string>
+    <string name="choose_app">Escoge una app</string>
+    <string name="easily_compress_and_share_imag">Comprime y comparte imágenes de manera fácil</string>
+    <string name="axel358">Axel358</string>
+    <string name="app_name">Compresor de Imágenes</string>
+
+</resources>

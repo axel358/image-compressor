@@ -5,7 +5,7 @@
     <string name="format">Format</string>
     <string name="share">Share</string>
     <string name="save">Save</string>
-    <string name="saved">Saved</string>
+    <string name="saved">Picture saved</string>
     <string name="save_error">Could not save image</string>
     <string name="choose_app">Choose an app</string>
     <string name="easily_compress_and_share_imag">Easily compress and share images</string>
