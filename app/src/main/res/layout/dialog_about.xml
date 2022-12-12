@@ -24,14 +24,14 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="Easily compress and share images"
+		android:text="@string/easily_compress_and_share_imag"
 		android:textSize="17sp"/>
 
 	<TextView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="Axel358"
+		android:text="@string/axel358"
 		android:textSize="16sp"/>
 
 </LinearLayout>

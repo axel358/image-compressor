@@ -25,7 +25,7 @@
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:text="Quality"
+		android:text="@string/quality"
 		android:textSize="15sp"/>
 
 	<LinearLayout
@@ -52,7 +52,7 @@
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:text="Resolution"
+		android:text="@string/resolution"
 		android:layout_marginTop="6dp"
 		android:textSize="15sp"/>
 
@@ -72,7 +72,7 @@
 		<TextView
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:text="0"
+			android:text="1"
 			android:id="@+id/tv_resolution"/>
 
 	</LinearLayout>
@@ -80,7 +80,7 @@
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:text="Format"
+		android:text="@string/format"
 		android:textSize="15sp"
 		android:layout_marginTop="6dp"/>
 
@@ -116,14 +116,14 @@
 			android:drawableLeft="@drawable/ic_share"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:text=" Share"
+			android:text="@string/share"
 			android:onClick="share"/>
 
 		<Button
-            android:drawableLeft="@drawable/ic_save"
+			android:drawableLeft="@drawable/ic_save"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:text="Save"
+			android:text="@string/save"
 			android:onClick="save"/>
 
 	</LinearLayout>

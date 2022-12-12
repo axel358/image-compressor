@@ -125,24 +125,6 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*"), OPEN_REQUEST_CODE);
     }
 
-    public void showOptions(View v) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        final View view = getLayoutInflater().inflate(R.layout.dialog_options, null);
-        dialog.setTitle("Compression options");
-        dialog.setView(view);
-        dialog.setNegativeButton("Cancel", null);
-
-
-        dialog.setPositiveButton("Apply", new DialogInterface.OnClickListener(){
-
-                @Override
-                public void onClick(DialogInterface p1, int p2) {
-
-                }
-            });
-
-        dialog.show();
-    }
 
     public void share(View v) {
         Uri uri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", compressedFile);
@@ -151,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         shareIntent.setType("image/*");
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivity(Intent.createChooser(shareIntent, "Choose an app"));
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.choose_app)));
     }
 
     public void save(View v) {
@@ -214,10 +196,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     is.close();
                     os.close();
-                    Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.saved, Toast.LENGTH_SHORT).show();
 
                 } catch (IOException e) {
-                    Toast.makeText(this, "Could not save pic", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.save_error, Toast.LENGTH_LONG).show();
                 }
             }
         }

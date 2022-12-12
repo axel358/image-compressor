@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="quality">Quality</string>
+    <string name="resolution">Resolution</string>
+    <string name="format">Format</string>
+    <string name="share">Share</string>
+    <string name="save">Save</string>
+    <string name="saved">Saved</string>
+    <string name="save_error">Could not save image</string>
+    <string name="choose_app">Choose an app</string>
+    <string name="easily_compress_and_share_imag">Easily compress and share images</string>
+    <string name="axel358">Axel358</string>
     <string name="app_name">Image Compressor</string>
-    <string name="hello_world">Hello, World!</string>
 
 </resources>
