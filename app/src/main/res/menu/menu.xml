@@ -6,9 +6,9 @@
         android:icon="@drawable/ic_image"
 		app:showAsAction="always"
         android:id="@+id/action_select_image"
-        android:title="Select image"/>
+        android:title="@string/select_image"/>
     
     <item
         android:id="@+id/action_about"
-        android:title="About"/>
+        android:title="@string/about"/>
 </menu>

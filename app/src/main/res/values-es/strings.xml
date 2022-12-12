@@ -11,5 +11,6 @@
     <string name="easily_compress_and_share_imag">Comprime y comparte imágenes de manera fácil</string>
     <string name="axel358">Axel358</string>
     <string name="app_name">Compresor de Imágenes</string>
-
+    <string name="select_image">Seleccionar imagen</string>
+    <string name="about">Acerca de</string>
 </resources>

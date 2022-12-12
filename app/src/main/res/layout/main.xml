@@ -9,6 +9,7 @@
 	android:padding="12dp">
 
 	<ImageView
+        android:onClick="open"
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
 		app:srcCompat="@drawable/ic_image"
