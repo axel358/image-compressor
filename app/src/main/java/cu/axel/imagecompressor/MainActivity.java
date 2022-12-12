@@ -33,15 +33,18 @@ import androidx.preference.PreferenceManager;
 import android.widget.RadioButton;
 import android.graphics.Bitmap.CompressFormat;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import androidx.core.content.FileProvider;
 
 public class MainActivity extends AppCompatActivity {
     private final int OPEN_REQUEST_CODE=4;
     private ContentResolver resolver;
     private ImageView previewIv;
-    private Uri openUri;
+    private Bitmap openBitmap;
     private TextView infoTv;
-    private File openFile;
+    private File compressedFile;
     private SharedPreferences sp;
+
+    private SeekBar qualitySb, resSb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,62 @@ public class MainActivity extends AppCompatActivity {
         previewIv = findViewById(R.id.preview_iv);
         infoTv = findViewById(R.id.image_info_tv);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
+
+        final RadioGroup formatGroup = findViewById(R.id.group_formats);
+        qualitySb = findViewById(R.id.sb_quality);
+        resSb = findViewById(R.id.sb_resolution);
+        final TextView resTv = findViewById(R.id.tv_resolution);
+        final TextView qualityTv = findViewById(R.id.tv_quality);
+
+        qualitySb.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+
+                @Override
+                public void onProgressChanged(SeekBar p1, int p2, boolean p3) {
+                    qualityTv.setText(p2 + "");
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar p1) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar p1) {
+                    compress();
+                }
+            });
+        resSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+
+                @Override
+                public void onProgressChanged(SeekBar p1, int p2, boolean p3) {
+                    resTv.setText(p2 + "");
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar p1) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar p1) {
+                    compress();
+                }
+            });
+        resSb.setProgress(sp.getInt("resolution", 90));
+        qualitySb.setProgress(sp.getInt("quality", 90));
+        RadioButton webpBtn = findViewById(R.id.btn_webp);
+        RadioButton jpgBtn = findViewById(R.id.btn_jpg);
+
+        String format = sp.getString("format", "jpg");
+        webpBtn.setChecked(format.equals("webp"));
+        jpgBtn.setChecked(format.equals("jpg"));
+
+        /*
+         SharedPreferences.Editor editor = sp.edit();
+         editor.putInt("resolution", resSb.getProgress());
+         editor.putInt("quality", qualitySb.getProgress());
+         RadioButton checkedBtn = view.findViewById(formatGroup.getCheckedRadioButtonId());
+         editor.putString("format", checkedBtn.getText().toString().toLowerCase());
+         editor.commit();*/
+
     }
 
     public void open(View v) {
@@ -63,90 +122,54 @@ public class MainActivity extends AppCompatActivity {
         dialog.setView(view);
         dialog.setNegativeButton("Cancel", null);
 
-        final RadioGroup formatGroup = view.findViewById(R.id.group_formats);
-        final SeekBar qualitySb = view.findViewById(R.id.sb_quality);
-        final SeekBar resSb = view.findViewById(R.id.sb_resolution);
-        final TextView resTv = view.findViewById(R.id.tv_resolution);
-        final TextView qualityTv = view.findViewById(R.id.tv_quality);
-        
-        qualitySb.setMax(100);
-        resSb.setMax(100);
-        qualitySb.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
-
-                @Override
-                public void onProgressChanged(SeekBar p1, int p2, boolean p3) {
-                    qualityTv.setText(p2+"");
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar p1) {
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar p1) {
-                }
-            });
-        resSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
-
-                @Override
-                public void onProgressChanged(SeekBar p1, int p2, boolean p3) {
-                    resTv.setText(p2+"");
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar p1) {
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar p1) {
-                }
-            });
-        resSb.setProgress(sp.getInt("resolution", 90));
-        qualitySb.setProgress(sp.getInt("quality", 90));
-        RadioButton webpBtn = view.findViewById(R.id.btn_webp);
-        RadioButton jpgBtn = view.findViewById(R.id.btn_jpg);
-        
-        String format = sp.getString("format", "jpg");
-        webpBtn.setChecked(format.equals("webp"));
-        jpgBtn.setChecked(format.equals("jpg"));
 
         dialog.setPositiveButton("Apply", new DialogInterface.OnClickListener(){
 
                 @Override
                 public void onClick(DialogInterface p1, int p2) {
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putInt("resolution", resSb.getProgress());
-                    editor.putInt("quality", qualitySb.getProgress());
-                    RadioButton checkedBtn = view.findViewById(formatGroup.getCheckedRadioButtonId());
-                    editor.putString("format", checkedBtn.getText().toString().toLowerCase());
-                    editor.commit();
+
                 }
             });
 
         dialog.show();
     }
 
-    public void compress(View v) {
+    public void share(View v) {
+        Uri uri = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", compressedFile);
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setData(uri);
+        shareIntent.setType("image/*");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(shareIntent, "Choose an app"));
+    }
+
+    public void compress() {
+
+        if (openBitmap == null)
+            return;
+
         try {
 
-            Bitmap bitmap = BitmapFactory.decodeFile(openFile.getAbsolutePath());
-            bitmap = scaleBitmap(bitmap, sp.getInt("resolution", 100) * 0.01f);
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            
-            Bitmap.CompressFormat format = sp.getString("format", "jpg").equals("jpg") ? Bitmap.CompressFormat.JPEG : Bitmap.CompressFormat.WEBP;
-            
-            bitmap.compress(format, sp.getInt("quality", 100), bytes);
+            //Scale
+            Bitmap bitmap = scaleBitmap(openBitmap, resSb.getProgress() * 0.01f);
 
-            File compressedFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "out.webp");
+            //Compress
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            Bitmap.CompressFormat format = sp.getString("format", "jpg").equals("jpg") ? Bitmap.CompressFormat.JPEG : Bitmap.CompressFormat.WEBP;
+            bitmap.compress(format, qualitySb.getProgress(), bytes);
+
+            compressedFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "out.webp");
             compressedFile.createNewFile();
             FileOutputStream os = new FileOutputStream(compressedFile);
             os.write(bytes.toByteArray());
             os.close();
+
             infoTv.setText(bitmap.getWidth() + "x" + bitmap.getHeight() + " " + formatFileSize(compressedFile.length()));
-            previewIv.setImageBitmap(bitmap);
+            previewIv.setImageBitmap(BitmapFactory.decodeFile(compressedFile.getAbsolutePath()));
 
         } catch (Exception e) {
-            Toast.makeText(this, e.toString()+"daas", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
         }
 
 
@@ -155,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
     public Bitmap scaleBitmap(Bitmap bitmap, float scale) {
         Matrix matrix = new Matrix();
         matrix.postScale(scale, scale);
-        
+
         return Bitmap.createBitmap(
             bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
     }
@@ -164,23 +187,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == OPEN_REQUEST_CODE) {
-                openUri = data.getData();
+                Uri openUri = data.getData();
                 resolver.takePersistableUriPermission(openUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                //Read the file
                 try {
                     InputStream is = resolver.openInputStream(openUri);
-                    openFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "temp.png");
-                    OutputStream os = new FileOutputStream(openFile);
-                    byte buffer[] = new byte[1024];
-
-                    while (is.read(buffer) != -1) {
-                        os.write(buffer);   
-                    }
+                    openBitmap = BitmapFactory.decodeStream(is);
                     is.close();
-                    os.close();
-
-                    Bitmap bitmap = BitmapFactory.decodeFile(openFile.getAbsolutePath());
-                    previewIv.setImageBitmap(bitmap);
-                    infoTv.setText(bitmap.getWidth() + "x" + bitmap.getHeight() + " " + formatFileSize(openFile.length()));
+                    compress();
                 } catch (IOException e) {}
             }
         }
@@ -207,5 +221,6 @@ public class MainActivity extends AppCompatActivity {
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
+
 
 }

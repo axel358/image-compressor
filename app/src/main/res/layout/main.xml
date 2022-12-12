@@ -11,7 +11,7 @@
 	<ImageView
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:src="@drawable/ic_image"
+		app:srcCompat="@drawable/ic_image"
 		android:layout_weight="1.0"
 		android:id="@+id/preview_iv"/>
 
@@ -22,26 +22,90 @@
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textSize="16sp"/>
 
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="Quality"
+		android:textSize="15sp"/>
+
 	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:gravity="center_vertical">
+
+		<SeekBar
+            android:max="100"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:id="@+id/sb_quality"
+			android:layout_weight="1.0"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="0"
+			android:id="@+id/tv_quality"/>
+
+	</LinearLayout>
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="Resolution"
+		android:layout_marginTop="6dp"
+		android:textSize="15sp"/>
+
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal">
+
+		<SeekBar
+            android:min="1"
+            android:max="100"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:id="@+id/sb_resolution"
+			android:layout_weight="1.0"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="0"
+			android:id="@+id/tv_resolution"/>
+
+	</LinearLayout>
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="Format"
+		android:textSize="15sp"
+		android:layout_marginTop="6dp"/>
+
+	<RadioGroup
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
 		android:orientation="horizontal"
-		android:layout_marginTop="6dp">
+		android:id="@+id/group_formats">
 
-		<Button
-			android:drawableLeft="@drawable/ic_image_compress"
+		<RadioButton
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:text="Compress"
-			android:onClick="compress"/>
+			android:text="JPG"
+			android:layout_weight="1.0"
+			android:id="@+id/btn_jpg"/>
 
-		<ImageButton
-			android:src="@drawable/ic_settings"
-			android:layout_height="match_parent"
+		<RadioButton
+			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:onClick="showOptions"/>
+			android:text="WEBP"
+			android:layout_weight="1.0"
+			android:id="@+id/btn_webp"
+			android:layout_marginLeft="12dp"/>
 
-	</LinearLayout>
+	</RadioGroup>
 
 	<Button
 		android:drawableLeft="@drawable/ic_share"
