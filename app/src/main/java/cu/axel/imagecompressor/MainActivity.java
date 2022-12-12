@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         try {
 
             //Scale
-            Bitmap bitmap = scaleBitmap(openBitmap, resSb.getProgress() * 0.01f);
+            Bitmap bitmap = Utils.scaleBitmap(openBitmap, resSb.getProgress() * 0.01f);
 
             //Compress
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
             os.write(bytes.toByteArray());
             os.close();
 
-            infoTv.setText(bitmap.getWidth() + "x" + bitmap.getHeight() + " " + formatFileSize(compressedFile.length()));
+            infoTv.setText(bitmap.getWidth() + "x" + bitmap.getHeight() + " " + Utils.formatFileSize(compressedFile.length()));
             previewIv.setImageBitmap(BitmapFactory.decodeFile(compressedFile.getAbsolutePath()));
 
         } catch (Exception e) {
@@ -188,13 +188,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public Bitmap scaleBitmap(Bitmap bitmap, float scale) {
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-
-        return Bitmap.createBitmap(
-            bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -241,13 +234,6 @@ public class MainActivity extends AppCompatActivity {
                 open(null);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public static String formatFileSize(long size) {
-        if (size <= 0) return "0";
-        final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
-        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
 
