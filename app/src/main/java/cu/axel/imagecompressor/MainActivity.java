@@ -98,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
                     sp.edit().putInt("resolution", resSb.getProgress()).commit();
                 }
             });
-        resSb.setProgress(sp.getInt("resolution", 90));
-        qualitySb.setProgress(sp.getInt("quality", 90));
+        resSb.setProgress(sp.getInt("resolution", 100));
+        qualitySb.setProgress(sp.getInt("quality", 60));
         RadioButton webpBtn = findViewById(R.id.btn_webp);
         RadioButton jpgBtn = findViewById(R.id.btn_jpg);
         webpBtn.setChecked(sp.getString("format", "jpg").equals("webp"));
