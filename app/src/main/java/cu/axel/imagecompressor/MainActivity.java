@@ -83,7 +83,9 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onProgressChanged(SeekBar p1, int p2, boolean p3) {
-                    resTv.setText(p2 + "");
+                    if (p2 == 0)
+                        resSb.setProgress(1);
+                    resTv.setText(resSb.getProgress() + "");
                 }
 
                 @Override
