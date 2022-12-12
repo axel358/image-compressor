@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onStopTrackingTouch(SeekBar p1) {
                     compress();
+                    sp.edit().putInt("quality", qualitySb.getProgress()).commit();
                 }
             });
         resSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
@@ -90,24 +91,29 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onStopTrackingTouch(SeekBar p1) {
                     compress();
+                    sp.edit().putInt("resolution", resSb.getProgress()).commit();
                 }
             });
         resSb.setProgress(sp.getInt("resolution", 90));
         qualitySb.setProgress(sp.getInt("quality", 90));
         RadioButton webpBtn = findViewById(R.id.btn_webp);
         RadioButton jpgBtn = findViewById(R.id.btn_jpg);
+        webpBtn.setChecked(sp.getString("format", "jpg").equals("webp"));
+        jpgBtn.setChecked(sp.getString("format", "jpg").equals("jpg"));
 
         String format = sp.getString("format", "jpg");
         webpBtn.setChecked(format.equals("webp"));
         jpgBtn.setChecked(format.equals("jpg"));
 
-        /*
-         SharedPreferences.Editor editor = sp.edit();
-         editor.putInt("resolution", resSb.getProgress());
-         editor.putInt("quality", qualitySb.getProgress());
-         RadioButton checkedBtn = view.findViewById(formatGroup.getCheckedRadioButtonId());
-         editor.putString("format", checkedBtn.getText().toString().toLowerCase());
-         editor.commit();*/
+        formatGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+
+                @Override
+                public void onCheckedChanged(RadioGroup p1, int p2) {
+                    RadioButton checkedBtn = findViewById(formatGroup.getCheckedRadioButtonId());
+                    sp.edit().putString("format", checkedBtn.getText().toString().toLowerCase()).commit();
+                    compress();
+                }
+            });
 
     }
 
@@ -156,10 +162,11 @@ public class MainActivity extends AppCompatActivity {
 
             //Compress
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            Bitmap.CompressFormat format = sp.getString("format", "jpg").equals("jpg") ? Bitmap.CompressFormat.JPEG : Bitmap.CompressFormat.WEBP;
+            String cFormat = sp.getString("format", "jpg");
+            Bitmap.CompressFormat format = cFormat.equals("jpg") ? Bitmap.CompressFormat.JPEG : Bitmap.CompressFormat.WEBP;
             bitmap.compress(format, qualitySb.getProgress(), bytes);
 
-            compressedFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "out.webp");
+            compressedFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "out." + cFormat);
             compressedFile.createNewFile();
             FileOutputStream os = new FileOutputStream(compressedFile);
             os.write(bytes.toByteArray());
