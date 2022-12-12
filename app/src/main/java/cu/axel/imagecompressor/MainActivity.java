@@ -234,9 +234,17 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_select_image:
                 open(null);
+                break;
+            case R.id.action_about:
+                showAboutDialog();
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void showAboutDialog() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setView(R.layout.dialog_about);
+        dialog.show();
+    }
 
 }
