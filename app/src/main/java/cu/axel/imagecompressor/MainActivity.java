@@ -35,6 +35,7 @@ import android.graphics.Bitmap.CompressFormat;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import androidx.core.content.FileProvider;
 import java.io.FileInputStream;
+import android.content.res.AssetFileDescriptor;
 
 public class MainActivity extends AppCompatActivity {
     private final int OPEN_REQUEST_CODE=4;

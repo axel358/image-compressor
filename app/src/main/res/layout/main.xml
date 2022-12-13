@@ -9,25 +9,30 @@
 	android:padding="12dp">
 
 	<ImageView
-        android:onClick="open"
+		android:onClick="open"
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
 		app:srcCompat="@drawable/ic_image"
 		android:layout_weight="1.0"
 		android:id="@+id/preview_iv"/>
 
-	<TextView
-		android:id="@+id/image_info_tv"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textSize="16sp"/>
+
+
+    <TextView
+        android:text="@string/select_image_hint"
+        android:layout_marginTop="6dp"
+        android:id="@+id/image_info_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="17sp"/>
 
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
 		android:text="@string/quality"
-		android:textSize="15sp"/>
+		android:textSize="15sp"
+		android:layout_marginTop="6dp"/>
 
 	<LinearLayout
 		android:layout_height="wrap_content"
