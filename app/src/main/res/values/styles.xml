@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat">
+    <style name="AppTheme" parent="Theme.MaterialComponents">
+        <item name="colorAccent">#199ca8</item>
+        <item name="colorPrimary">#199ca8</item>
+        <item name="buttonStyle">@style/MButton</item>
 	</style>
+    
+    <style name="MButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textAllCaps">false</item>
+    </style>
 </resources>

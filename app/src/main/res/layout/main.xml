@@ -7,38 +7,67 @@
 	android:gravity="center"
 	android:orientation="vertical"
 	android:padding="12dp">
+    
+    <LinearLayout
+        android:onClick="open"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/status_layout">
 
-	<ImageView
-		android:onClick="open"
+        <ImageView
+            android:layout_height="120dp"
+            android:layout_width="120dp"
+            app:srcCompat="@drawable/ic_image"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/select_image_hint"/>
+
+	</LinearLayout>
+
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+	<com.makeramen.roundedimageview.RoundedImageView
+        android:elevation="3dp"
+        android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		app:srcCompat="@drawable/ic_image"
-		android:layout_weight="1.0"
-		android:id="@+id/preview_iv"/>
-
-
-
-    <TextView
-        android:text="@string/select_image_hint"
-        android:layout_marginTop="6dp"
-        android:id="@+id/image_info_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="17sp"/>
+		android:onClick="open"
+		android:id="@+id/preview_iv"
+		android:scaleType="fitCenter"
+		app:riv_corner_radius="16dip"
+		android:layout_weight="1.0"/>
 
 	<TextView
-		android:layout_height="wrap_content"
+        android:background="@drawable/round_rect_gray"
+		android:text="@string/select_image_hint"
+		android:layout_marginTop="6dp"
+        android:id="@+id/image_info_tv"
 		android:layout_width="wrap_content"
-		android:text="@string/quality"
-		android:textSize="15sp"
-		android:layout_marginTop="6dp"/>
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textSize="16sp"
+		android:padding="8dp"/>
 
 	<LinearLayout
+        android:layout_marginTop="6dp"
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
 		android:orientation="horizontal"
 		android:gravity="center_vertical">
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="80dp"
+			android:text="Quality"
+			android:textSize="15sp"/>
 
 		<SeekBar
 			android:max="100"
@@ -55,17 +84,18 @@
 
 	</LinearLayout>
 
-	<TextView
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:text="@string/resolution"
-		android:layout_marginTop="6dp"
-		android:textSize="15sp"/>
-
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:orientation="horizontal">
+		android:orientation="horizontal"
+		android:layout_marginTop="6dp"
+		android:gravity="center">
+
+		<TextView
+			android:layout_height="match_parent"
+			android:layout_width="80dp"
+			android:text="Resolution"
+			android:textSize="15sp"/>
 
 		<SeekBar
 			android:min="1"
@@ -76,38 +106,37 @@
 			android:layout_weight="1.0"/>
 
 		<TextView
-			android:layout_height="wrap_content"
+			android:layout_height="match_parent"
 			android:layout_width="wrap_content"
 			android:text="1"
 			android:id="@+id/tv_resolution"/>
 
 	</LinearLayout>
 
-	<TextView
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:text="@string/format"
-		android:textSize="15sp"
-		android:layout_marginTop="6dp"/>
-
 	<RadioGroup
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
+		android:layout_width="match_parent"
 		android:orientation="horizontal"
-		android:id="@+id/group_formats">
+		android:id="@+id/group_formats"
+		android:gravity="center_vertical">
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="Format"
+			android:textSize="15sp"
+			android:layout_weight="1.0"/>
 
 		<RadioButton
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:text="JPG"
-			android:layout_weight="1.0"
 			android:id="@+id/btn_jpg"/>
 
 		<RadioButton
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:text="WEBP"
-			android:layout_weight="1.0"
 			android:id="@+id/btn_webp"
 			android:layout_marginLeft="12dp"/>
 
@@ -118,21 +147,22 @@
 		android:layout_width="wrap_content"
 		android:orientation="horizontal">
 
-		<Button
-			android:drawableLeft="@drawable/ic_share"
+		<com.google.android.material.button.MaterialButton
+			app:cornerRadius="16dp"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:text="@string/share"
 			android:onClick="share"/>
 
-		<Button
-			android:drawableLeft="@drawable/ic_save"
+		<com.google.android.material.button.MaterialButton
+			app:cornerRadius="16dp"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:text="@string/save"
-			android:onClick="save"/>
+			android:onClick="save"
+			android:layout_marginLeft="6dp"/>
 
 	</LinearLayout>
-
+    </LinearLayout>
 </LinearLayout>
 

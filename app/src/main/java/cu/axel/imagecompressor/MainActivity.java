@@ -36,18 +36,24 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import androidx.core.content.FileProvider;
 import java.io.FileInputStream;
 import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
+import android.provider.OpenableColumns;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 public class MainActivity extends AppCompatActivity {
     private final int OPEN_REQUEST_CODE=4;
     private final int SAVE_REQUEST_CODE=6;
     private ContentResolver resolver;
-    private ImageView previewIv;
+    private RoundedImageView previewIv;
     private Bitmap openBitmap;
     private TextView infoTv;
     private File compressedFile;
+    private String fileName;
     private SharedPreferences sp;
 
     private SeekBar qualitySb, resSb;
+
+    private String cFormat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void save(View v) {
-        startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*").putExtra(Intent.EXTRA_TITLE, compressedFile.getName()), SAVE_REQUEST_CODE);
+        startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*").putExtra(Intent.EXTRA_TITLE, fileName + "." + cFormat), SAVE_REQUEST_CODE);
     }
 
     public void compress() {
@@ -153,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
             //Compress
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            String cFormat = sp.getString("format", "jpg");
+            cFormat = sp.getString("format", "jpg");
             Bitmap.CompressFormat format = cFormat.equals("jpg") ? Bitmap.CompressFormat.JPEG : Bitmap.CompressFormat.WEBP;
             bitmap.compress(format, qualitySb.getProgress(), bytes);
 
@@ -178,8 +184,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == OPEN_REQUEST_CODE) {
+                
+                findViewById(R.id.status_layout).setVisibility(View.GONE);
+                
+                
                 Uri openUri = data.getData();
-                resolver.takePersistableUriPermission(openUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                if (openUri.getScheme().equals("content")) {
+                    Cursor cursor = resolver.query(openUri, new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null);
+                    try {
+                        if (cursor != null && cursor.moveToFirst())
+                            fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    } catch (Exception e) {
+
+                    }
+                    if (fileName == null)
+                        fileName = openUri.getLastPathSegment();
+                    cursor.close();
+
+                }
+
                 //Read the file
                 try {
                     InputStream is = resolver.openInputStream(openUri);
